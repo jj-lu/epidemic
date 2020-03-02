@@ -11,6 +11,7 @@
     <title>疫情信息</title>
 </head>
 <body>
-疫情统计信息 增加了一些内容。
+<div id="container">疫情统计信息 增加了一些内容。</div>
+<a href="login.jsp">登录</a>
 </body>
 </html>

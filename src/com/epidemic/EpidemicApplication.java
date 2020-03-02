@@ -6,13 +6,13 @@ public class EpidemicApplication extends AbstractAnnotationConfigDispatcherServl
     @Override
     protected Class<?>[] getRootConfigClasses() {
         //spring的配置类
-        return new Class[0];
+        return new Class[]{SpringConfig.class};
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
         //springmvc的配置类
-        return new Class[0];
+        return new Class[]{SpringMVCConfig.class};
     }
 
     @Override
