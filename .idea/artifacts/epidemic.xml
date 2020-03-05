@@ -9,6 +9,7 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="springmvc" />
           <element id="library" level="project" name="log4j" />
+          <element id="library" level="project" name="mybaits-dbcp-driver" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="epidemic/web/Web" />
