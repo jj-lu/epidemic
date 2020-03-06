@@ -9,6 +9,12 @@
 <html>
 <head>
     <title>疫情信息</title>
+    <style>
+        #container{
+            height: 500px;
+            background-image: url('img/banner.jpg');
+        }
+    </style>
 </head>
 <body>
 <div id="container">疫情统计信息 增加了一些内容。</div>

@@ -9,8 +9,14 @@
 <html>
   <head>
     <title>$Title$</title>
+    <style type="text/css">
+      #container{
+        height: 500px;
+        background-image: url('img/banner.jpg');
+      }
+    </style>
   </head>
-  <body>
+  <body id="container">
   $END$
   </body>
 </html>
