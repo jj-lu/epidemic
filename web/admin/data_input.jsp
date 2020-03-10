@@ -34,14 +34,46 @@
             </ul>
             <div class="row">
                 <div class="form-group">
-                    <div class="input-group date col-md-3" id="datepicker" data-date-format="yyyy-mm-dd">
-                        <div class="input-group-addon">数据日期</div>
-                        <input class="form-control" size="16" type="text" value="" readonly>
-                        <div class="input-group-addon"><span class="add-on glyphicon glyphicon-calendar"></span></div>
+                    <div class="col-md-4">
+                        <div class="input-group date" id="datepicker" data-date-format="yyyy-mm-dd">
+                            <div class="input-group-addon">数据日期</div>
+                            <input class="form-control" size="16" type="text" value="" readonly id="dataDate">
+                            <div class="input-group-addon"><span class="add-on glyphicon glyphicon-calendar"></span></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary" type="button" id="btnSubmit">提交 <span class="glyphicon glyphicon-log-in"></span></button>
                     </div>
                 </div>
             </div>
-            这是数据录入的内容
+            <br>
+            <div class="row">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>省份</th>
+                            <th>确诊人数</th>
+                            <th>疑似人数</th>
+                            <th>隔离人数</th>
+                            <th>治愈人数</th>
+                            <th>死亡人数</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body1">
+                        <tr>
+                            <td>湖北</td>
+                            <td><input class="form-control" type="text" name="affirmed" size="4" maxlength="4"></td>
+                            <td><input class="form-control" type="text" name="suspected" size="4" maxlength="4"></td>
+                            <td><input type="text" size="4" maxlength="4" class="form-control" name="isolated"></td>
+                            <td><input type="text" size="4" maxlength="4" class="form-control" name="cured"></td>
+                            <td><input type="text" size="4" maxlength="4" class="form-control" name="dead"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div id="msg"></div>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -58,7 +90,10 @@
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/bootstrap/datepicker/bootstrap-datepicker.zh-CN.min.js"></script>
 <script type="text/javascript">
+    var provinces = null;
     $(function () {
+
+        //设置日期输入框的初始值和取值范围
         var datepicker = $("#datepicker");
         datepicker.datepicker({
             language:'zh-CN',
@@ -70,7 +105,68 @@
         date1.setDate(current.getDate()-7);
         datepicker.datepicker("setStartDate",date1);
         datepicker.datepicker("setEndDate",current);
+        //给日期选择框设置事件处理函数
+        datepicker.datepicker().on("changeDate",loadProvinceList);
+        //装备省份列表
+        loadProvinceList();
+        //给提交按钮绑定时间处理函数
+        $("#btnSubmit").onclick();
     })
+
+    function loadProvinceList() {
+        //清空表格
+        var tbody1 = $("#body1");
+        tbody1.empty();
+        //获取当前日期框中的值
+        var date = $("#dataDate").val();
+        alert(date);
+        $.get("${pageContext.request.contextPath}/province/ajax/noDataList",{date:date},function (resp) {
+            if(resp.code<0){
+                alert(resp.msg);
+            }else{
+                fillProvinceToTable(resp.data);
+            }
+        },"json");
+    }
+
+    function fillProvinceToTable(array) {
+        //
+        if(array && array.length>0){
+            provinces = array;
+            var tbody1 = $("#body1");
+            $.each(array,function (index,province) {
+                var tr = $("<tr>");
+                var td = $("<td>");
+                td.text(province.provinceName);
+                console.info(province.provinceName);
+                tr.append(td);
+
+                td = $("<td>");
+                td.html('<input class="form-control" type="text" name="affirmed" size="4" maxlength="4">');
+                tr.append(td);
+
+                td = $("<td>");
+                td.html('<input class="form-control" type="text" name="suspected" size="4" maxlength="4">');
+                tr.append(td);
+
+                td = $("<td>");
+                td.html('<input class="form-control" type="text" name="isolated" size="4" maxlength="4">');
+                tr.append(td);
+
+                td = $("<td>");
+                td.html('<input class="form-control" type="text" name="cured" size="4" maxlength="4">');
+                tr.append(td);
+
+                td = $("<td>");
+                td.html('<input class="form-control" type="text" name="dead" size="4" maxlength="4">');
+                tr.append(td);
+
+                tbody1.append(tr)
+            });
+        }else{
+            $("#msg").html("本日所有省份都录入数据");
+        }
+    }
 </script>
 </body>
 </html>
