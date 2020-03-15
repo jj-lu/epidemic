@@ -11,7 +11,7 @@ public interface ProvinceMapper {
 
 @Select(value = "SELECT p.`province_id`,p.`province_name`,p.`province_pinyin` " +
         "FROM provinces p " +
-        "WHERE p.`del_flag` IS NULL OR p.`del_flag`=0 " +
+        "WHERE (p.`del_flag` IS NULL OR p.`del_flag`=0) " +
         "AND p.`province_id` NOT IN ( " +
         "SELECT e.`province_id` " +
         "FROM epidemics e " +

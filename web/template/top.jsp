@@ -10,4 +10,8 @@
     <div class="col-md-6 logo">
         疫情数据发布系统
     </div>
+    <div class="col-md-2 col-md-offset-4">
+        <p>欢迎你：<span class="label label-info">${loginuser.userName}</span></p><br>
+        <a href="${pageContext.request.contextPath}/user/logout" class="btn btn-danger">推出登录</a>
+    </div>
 </div>

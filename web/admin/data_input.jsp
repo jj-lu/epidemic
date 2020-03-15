@@ -103,23 +103,74 @@
         datepicker.datepicker("setDate",current);
         var date1 = new Date();
         date1.setDate(current.getDate()-7);
-        datepicker.datepicker("setStartDate",date1);
+        //datepicker.datepicker("setStartDate",date1);
         datepicker.datepicker("setEndDate",current);
         //给日期选择框设置事件处理函数
         datepicker.datepicker().on("changeDate",loadProvinceList);
         //装备省份列表
         loadProvinceList();
         //给提交按钮绑定时间处理函数
-        $("#btnSubmit").onclick();
-    })
+        $("#btnSubmit").click(checkAndSubmitData);
+    });
+
+    function checkAndSubmitData() {
+        var valid = true;
+        var affirmed = $("input[name = affirmed]");
+        var suspected = $("input[name = suspected]");
+        var isolated = $("input[name = isolated]");
+        var cured = $("input[name = cured]");
+        var dead = $("input[name = dead]");
+        affirmed.each(function (index,element) {
+            if(isNaN(Number(element.value))){
+                valid = false;
+            }
+        });
+        if(valid){
+            var dataArray=[];
+            for(var i=0;i<provinces.length;i++){
+                var obj = {} ;
+                obj.provinceId = provinces[i].provinceId;
+                obj.affirmed = affirmed.get(i).value;
+                obj.suspected = suspected.get(i).value;
+                obj.isolated = isolated.get(i).value;
+                obj.cured = cured.get(i).value;
+                //obj.dead = dead.get(i).value;
+                obj.dead = dead.get(i).value;
+                dataArray.push(obj)
+            }
+            //console.info(dataArray);
+            var data = {};
+            var date = $("#dataDate").val();
+            data.date = date;
+            data.array = dataArray;
+            /*$.post("${pageContext.request.contextPath}/epidmicData/ajax/input",data,function (resp) {
+                console.info(resp)
+            },"json");*/
+
+            $.ajax({
+                url:"${pageContext.request.contextPath}/epidemicData/ajax/input",
+                type:"post",
+                data:JSON.stringify(data),
+                contentType:"application/json",
+                dataType:'json',
+                success:function (resp) {
+                    if(resp.code<0){
+                        alert(resp.msg);
+                    }else{
+                        fillProvinceToTable(resp.data)
+                    }
+                }
+            });
+        }else{
+            alert("请检查你的输入，确保输入有效的数值");
+        }
+    }
 
     function loadProvinceList() {
-        //清空表格
-        var tbody1 = $("#body1");
-        tbody1.empty();
+
         //获取当前日期框中的值
         var date = $("#dataDate").val();
-        alert(date);
+        //alert(date);
         $.get("${pageContext.request.contextPath}/province/ajax/noDataList",{date:date},function (resp) {
             if(resp.code<0){
                 alert(resp.msg);
@@ -130,7 +181,11 @@
     }
 
     function fillProvinceToTable(array) {
-        //
+        //清空信息
+        $("#msg").html("");
+        //清空表格
+        var tbody1 = $("#body1");
+        tbody1.empty();
         if(array && array.length>0){
             provinces = array;
             var tbody1 = $("#body1");
@@ -142,23 +197,23 @@
                 tr.append(td);
 
                 td = $("<td>");
-                td.html('<input class="form-control" type="text" name="affirmed" size="4" maxlength="4">');
+                td.html('<input class="form-control" type="text" name="affirmed" size="4" maxlength="4" value="0">');
                 tr.append(td);
 
                 td = $("<td>");
-                td.html('<input class="form-control" type="text" name="suspected" size="4" maxlength="4">');
+                td.html('<input class="form-control" type="text" name="suspected" size="4" maxlength="4" value="0">');
                 tr.append(td);
 
                 td = $("<td>");
-                td.html('<input class="form-control" type="text" name="isolated" size="4" maxlength="4">');
+                td.html('<input class="form-control" type="text" name="isolated" size="4" maxlength="4" value="0">');
                 tr.append(td);
 
                 td = $("<td>");
-                td.html('<input class="form-control" type="text" name="cured" size="4" maxlength="4">');
+                td.html('<input class="form-control" type="text" name="cured" size="4" maxlength="4" value="0">');
                 tr.append(td);
 
                 td = $("<td>");
-                td.html('<input class="form-control" type="text" name="dead" size="4" maxlength="4">');
+                td.html('<input class="form-control" type="text" name="dead" size="4" maxlength="4" value="0">');
                 tr.append(td);
 
                 tbody1.append(tr)

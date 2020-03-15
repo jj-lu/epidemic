@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
 
 
 @Controller
@@ -20,7 +21,7 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping("/login")
-    public String login(UserInfo userInfo, Model model){
+    public String login(UserInfo userInfo, Model model, HttpSession session){
         logger.debug("login()方法被執行了。。。account="+userInfo.getAccount()+"passowrd"+userInfo.getPassword());
         //通過業務邏輯層
         UserInfo user = this.userService.findByAccount(userInfo.getAccount());
@@ -30,6 +31,8 @@ public class UserController {
             return "login";
         }
         if(user.getPassword().equals(userInfo.getPassword())){
+            //session保持登录成功后的用户
+            session.setAttribute("loginuser",user);
             //登录成功
             return "redirect:/main.jsp";
         }else{
@@ -37,5 +40,12 @@ public class UserController {
             model.addAttribute("msg","密码不正确");
             return "login";
         }
+    }
+
+    @RequestMapping("/logout")
+    public String logout(HttpSession session){
+        //清除session对象
+        session.invalidate();
+        return "redirect:/epidemic.jsp";
     }
 }
